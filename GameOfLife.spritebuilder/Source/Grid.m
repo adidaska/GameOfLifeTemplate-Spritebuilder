@@ -2,14 +2,13 @@
 //  Grid.m
 //  GameOfLife
 //
-//  Created by Benjamin Encz on 31/01/14.
-//  Copyright (c) 2014 MakeGamesWithUs inc. Free to use for all purposes.
+//  Created by Martin Graham on 8/11/15.
+//  Copyright (c) 2015 Apportable. All rights reserved.
 //
 
 #import "Grid.h"
 #import "Creature.h"
 
-// these are variables that cannot be changed
 static const int GRID_ROWS = 8;
 static const int GRID_COLUMNS = 10;
 
@@ -19,82 +18,44 @@ static const int GRID_COLUMNS = 10;
     float _cellHeight;
 }
 
-#pragma mark - Lifecycle
-
-- (void)onEnter
-{
+-(void)onEnter {
     [super onEnter];
     
     [self setupGrid];
     
-    // accept touches on the grid
     self.userInteractionEnabled = YES;
 }
 
-#pragma mark - Setup Grid
-
-- (void)setupGrid
-{
-    // divide the grid's size by the number of columns/rows to figure out the right width and height of each cell
-    _cellWidth = self.contentSize.width / GRID_COLUMNS;
+-(void) setupGrid {
     _cellHeight = self.contentSize.height / GRID_ROWS;
+    _cellWidth = self.contentSize.width / GRID_COLUMNS;
     
     float x = 0;
     float y = 0;
     
-    // initialize the array as a blank NSMutableArray
     _gridArray = [NSMutableArray array];
     
-    // initialize Creatures
-    for (int i = 0; i < GRID_ROWS; i++) {
-        // this is how you create two dimensional arrays in Objective-C. You put arrays into arrays.
+    for(int i = 0; i<GRID_ROWS; i++){
         _gridArray[i] = [NSMutableArray array];
-        x = 0;
+        x=0;
         
-        for (int j = 0; j < GRID_COLUMNS; j++) {
+        for(int j = 0; j<GRID_COLUMNS; j++){
             Creature *creature = [[Creature alloc] initCreature];
-            creature.anchorPoint = ccp(0, 0);
-            creature.position = ccp(x, y);
+            creature.anchorPoint = ccp(0,0);
+            creature.position = ccp(x,y);
             [self addChild:creature];
             
-            // this is shorthand to access an array inside an array
             _gridArray[i][j] = creature;
+            
+            //creature.isAlive = YES;
             
             x+=_cellWidth;
         }
         
-        y += _cellHeight;
+        y+= _cellHeight;
     }
+                  
 }
-
-
-#pragma mark - Touch Handling
-
-- (void)touchBegan:(CCTouch *)touch withEvent:(CCTouchEvent *)event
-{
-    //get the x,y coordinates of the touch
-    CGPoint touchLocation = [touch locationInNode:self];
-    
-    //get the Creature at that location
-    Creature *creature = [self creatureForTouchPosition:touchLocation];
-    
-    //invert it's state - kill it if it's alive, bring it to life if it's dead.
-    creature.isAlive = !creature.isAlive;
-}
-
-- (Creature *)creatureForTouchPosition:(CGPoint)touchPosition
-{
-    //get the row and column that was touched, return the Creature inside the corresponding cell
-    Creature *creature = nil;
-    
-    int column = touchPosition.x / _cellWidth;
-    int row = touchPosition.y / _cellHeight;
-    creature = _gridArray[row][column];
-    
-    return creature;
-}
-
-#pragma mark - Util function
 
 - (BOOL)isIndexValidForX:(int)x andY:(int)y
 {
@@ -106,40 +67,38 @@ static const int GRID_COLUMNS = 10;
     return isIndexValid;
 }
 
-#pragma mark - Game Logic
+-(void)touchBegan:(CCTouch *)touch withEvent:(CCTouchEvent *)event{
+    
+    CGPoint touchLocation = [touch locationInNode:self];
+    
+    Creature *creature = [self creatureForTouchPosition:touchLocation];
+    creature.isAlive = !creature.isAlive;
+}
 
-- (void)evolveStep {
-    //update each Creature's neighbor count
+-(Creature *)creatureForTouchPosition:(CGPoint)touchPosition{
+    
+    int row = touchPosition.y / _cellHeight;
+    int column = touchPosition.x / _cellWidth;
+    
+    return _gridArray[row][column];
+}
+
+-(void)evolveStep
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hey" message:@"there" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    // count creatures neighbors
     [self countNeighbors];
     
-    //update each Creature's state
+    //update each creature's state
     [self updateCreatures];
     
-    //update the generation so the label's text will display the correct generation
+    // update the generation so the label's text will display the correct generation
     _generation++;
 }
 
-- (void)updateCreatures {
-    _totalAlive = 0;
-    
-    for (int i = 0; i < [_gridArray count]; i++) {
-        for (int j = 0; j < [_gridArray[i] count]; j++) {
-            Creature *currentCreature = _gridArray[i][j];
-            if (currentCreature.livingNeighbors == 3) {
-                currentCreature.isAlive = YES;
-            } else if ( (currentCreature.livingNeighbors <= 1) || (currentCreature.livingNeighbors >= 4)) {
-                currentCreature.isAlive = NO;
-            }
-            
-            if (currentCreature.isAlive) {
-                _totalAlive++;
-            }
-        }
-    }
-}
-
-
-- (void)countNeighbors {
+-(void)countNeighbors
+{
     // iterate through the rows
     // note that NSArray has a method 'count' that will return the number of elements in the array
     for (int i = 0; i < [_gridArray count]; i++)
@@ -179,5 +138,29 @@ static const int GRID_COLUMNS = 10;
         }
     }
 }
+
+-(void)updateCreatures
+{
+    _totalAlive = 0;
+    
+    for (int i = 0; i < [_gridArray count]; i++){
+        for(int j=0; j < [_gridArray[i] count]; j++){
+            Creature *thisCurrentCreature = _gridArray[i][j];
+            if (thisCurrentCreature.livingNeighbors == 3) {
+                thisCurrentCreature.isAlive = YES;
+            }
+            else if ((thisCurrentCreature.livingNeighbors <= 1) || (thisCurrentCreature.livingNeighbors >= 4)) {
+                thisCurrentCreature.isAlive = NO;
+            }
+            if (thisCurrentCreature.isAlive) {
+                _totalAlive++;
+            }
+        }
+
+    }
+}
+
+
+
 
 @end
