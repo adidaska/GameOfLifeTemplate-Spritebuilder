@@ -135,14 +135,18 @@ static const int GRID_COLUMNS = 10;
             Creature *thisCurrentCreature = _gridArray[i][j];
             
             if (thisCurrentCreature.livingNeighbors == 3) {
-                thisCurrentCreature.isAlive = true;
+                thisCurrentCreature.isAlive = YES;
             }
             else{
                 if (thisCurrentCreature.livingNeighbors <= 1 || thisCurrentCreature.livingNeighbors >= 4) {
-                    thisCurrentCreature.isAlive = false;
+                    thisCurrentCreature.isAlive = NO;
                 }
             }
+            if (thisCurrentCreature.isAlive) {
+                _totalAlive++;
+            }
         }
+
     }
 }
 
