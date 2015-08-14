@@ -29,9 +29,6 @@ CCLabelTTF *_populationLabel;
 
 -(void) play
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hey" message:@"See me now" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-    NSLog(@"hey there");
     [self schedule:@selector(step) interval:0.5f];
 }
 
