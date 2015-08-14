@@ -66,6 +66,7 @@ static const int GRID_COLUMNS = 10;
 }
 
 -(Creature *)creatureForTouchPosition:(CGPoint)touchPosition{
+    
     int row = touchPosition.y / _cellHeight;
     int column = touchPosition.x / _cellWidth;
     
@@ -128,19 +129,16 @@ static const int GRID_COLUMNS = 10;
 
 -(void)updateCreatures
 {
-    for (int i = 0; i < [_gridArray count]; i++)
-    {
-        for(int j=0; j < [_gridArray[i] count]; j++)
-        {
+    _totalAlive = 0;
+    
+    for (int i = 0; i < [_gridArray count]; i++){
+        for(int j=0; j < [_gridArray[i] count]; j++){
             Creature *thisCurrentCreature = _gridArray[i][j];
-            
             if (thisCurrentCreature.livingNeighbors == 3) {
                 thisCurrentCreature.isAlive = YES;
             }
-            else{
-                if (thisCurrentCreature.livingNeighbors <= 1 || thisCurrentCreature.livingNeighbors >= 4) {
-                    thisCurrentCreature.isAlive = NO;
-                }
+            else if ((thisCurrentCreature.livingNeighbors <= 1) || (thisCurrentCreature.livingNeighbors >= 4)) {
+                thisCurrentCreature.isAlive = NO;
             }
             if (thisCurrentCreature.isAlive) {
                 _totalAlive++;
