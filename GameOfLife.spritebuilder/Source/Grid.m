@@ -75,6 +75,8 @@ static const int GRID_COLUMNS = 10;
 
 -(void)evolveStep
 {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hey" message:@"there" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
     // count creatures neighbors
     [self countNeighbors];
     
